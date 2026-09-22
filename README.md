@@ -1,5 +1,7 @@
 # Homebox E-Shop Connector Suite
 
+[![CI](https://github.com/Cougar/userscript-homebox/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Cougar/userscript-homebox/actions/workflows/ci.yml?query=branch%3Amain)
+
 A modular browser userscript suite that connects online stores directly to your self-hosted [Homebox](https://homebox.software/) inventory instance. With a single click, save purchased tools, hardware, and components into Homebox complete with pricing, purchase dates, seller information, high-resolution photo galleries, and PDF manuals.
 
 ## Features
