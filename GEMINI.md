@@ -77,6 +77,8 @@ To keep adapter files minimal and avoid CSS duplication:
 - **Indentation**: 2 spaces.
 - **No Trailing Whitespace**: Every line must be trimmed.
 - **Line Endings**: Single clean Unix newline at end of file.
+- **Versioning**: Always increment the userscript `@version` (patch/minor) whenever modifying script code.
+- **User Verification**: Always ask the user to test the script in their browser to confirm that the fix works before committing changes.
 - **Linting & Formatting**:
   ```bash
   npx eslint *.user.js

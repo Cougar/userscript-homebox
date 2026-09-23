@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - [Custom] Osta.ee
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.0
+// @version      1.0.2
 // @description  Homebox e-shop integration custom adapter for Osta.ee
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -26,20 +26,32 @@
 
   const UI_CONFIG = {
     detail: {
-      targetSelector: ".bids-and-buy",
-      insertPosition: "beforeend",
+      targetSelector: [
+        ".data-list",
+        ".offer-details__price-data.default",
+        ".offer-details__price-data",
+        ".bids-and-buy",
+      ],
+      insertPosition: "afterend",
       buttonText: "Add to Homebox",
       theme: {
-        nativeClasses: ["btn", "btn-orange"],
+        nativeClasses: ["btn", "btn-primary"],
         styleOverrides: {
-          marginLeft: "12px",
-          verticalAlign: "middle",
+          marginTop: "12px",
+          marginBottom: "12px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontWeight: "600",
         },
       },
     },
     listing: {
-      cardSelector: ".product-grid-item, .listing-item, .c-product-card",
-      targetSelector: ".image-wrapper, .c-product-card__image-wrapper",
+      cardSelector:
+        ".offer-thumb, .product-grid-item, .listing-item, .c-product-card",
+      targetSelector:
+        ".offer-thumb__image, .image-wrapper, .c-product-card__image-wrapper",
       insertPosition: "beforeend",
       theme: {
         nativeClasses: [],
@@ -54,7 +66,11 @@
 
   // --- Scraper & Parser Implementation ---
   function isProductPage() {
-    return !!document.querySelector(".header-title");
+    return !!(
+      document.querySelector(".header-title") ||
+      document.querySelector('[itemprop="productID"]') ||
+      window.location.pathname.match(/-\d+\.html/)
+    );
   }
 
   function deduplicateImages(urls) {
@@ -81,8 +97,33 @@
     return deduplicated;
   }
 
+  function parseOstaDate(dateStr) {
+    if (!dateStr) return "";
+    const match = dateStr.match(
+      /(\d{1,2})\.(\d{1,2})\.(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/,
+    );
+    if (!match) return "";
+    const day = match[1].padStart(2, "0");
+    const month = match[2].padStart(2, "0");
+    const year = match[3];
+    const hours = (match[4] || "12").padStart(2, "0");
+    const minutes = (match[5] || "00").padStart(2, "0");
+    const seconds = (match[6] || "00").padStart(2, "0");
+
+    const d = new Date(
+      `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`,
+    );
+    if (!isNaN(d.getTime())) {
+      return d.toISOString();
+    }
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
+  }
+
   function scrapeProductDetails() {
-    const titleEl = document.querySelector(".header-title");
+    const titleEl =
+      document.querySelector(".header-title") ||
+      document.querySelector("h1") ||
+      document.querySelector('[itemprop="name"]');
     const name = titleEl ? titleEl.textContent.trim() : "";
 
     let value = 0;
@@ -94,8 +135,9 @@
     const ostakoheRow = rows.find((tr) =>
       tr.textContent.includes("Osta kohe:"),
     );
+    const alghindRow = rows.find((tr) => tr.textContent.includes("Alghind:"));
 
-    const activeRow = lopphindRow || hetkehindRow || ostakoheRow;
+    const activeRow = lopphindRow || hetkehindRow || ostakoheRow || alghindRow;
     let priceText = "";
     if (activeRow) {
       const priceSpan =
@@ -106,12 +148,29 @@
     if (!priceText) {
       const priceEl =
         document.querySelector(".js-current-price") ||
-        document.querySelector(".price-new");
+        document.querySelector(".price-new") ||
+        document.querySelector('[itemprop="price"]');
       if (priceEl) priceText = priceEl.textContent;
     }
     if (priceText) {
       const cleanPrice = priceText.replace(/[^0-9,.]/g, "").replace(",", ".");
       value = parseFloat(cleanPrice) || 0;
+    }
+
+    let purchaseDate = "";
+    const dateEl =
+      document.querySelector('[itemprop="validThrough"]') ||
+      document.querySelector(".js-date-end");
+    let dateText = dateEl ? dateEl.textContent.trim() : "";
+    if (!dateText) {
+      const lopuaegRow = rows.find((tr) => tr.textContent.includes("Lõpuaeg:"));
+      if (lopuaegRow) {
+        const td = lopuaegRow.querySelector("td");
+        if (td) dateText = td.textContent.trim();
+      }
+    }
+    if (dateText) {
+      purchaseDate = parseOstaDate(dateText) || "";
     }
 
     const descEl =
@@ -121,13 +180,22 @@
     const description = descEl ? descEl.textContent.trim() : "";
 
     const skuEl = document.querySelector('[itemprop="productID"]');
-    const sku = skuEl ? skuEl.textContent.replace(/[^0-9]/g, "") : "";
+    let sku = skuEl ? skuEl.textContent.replace(/[^0-9]/g, "") : "";
+    if (!sku) {
+      const idMatch = window.location.pathname.match(/-(\d+)\.html/);
+      if (idMatch) sku = idMatch[1];
+    }
 
     const sellerEl =
+      document.querySelector(".view-seller-items-btn") ||
       document.querySelector(".seller-name") ||
-      document.querySelector(".user-name a");
+      document.querySelector(".user-name a") ||
+      document.querySelector(".username a");
     const sellerName = sellerEl ? sellerEl.textContent.trim() : "";
-    const sellerUrl = sellerEl && sellerEl.href ? sellerEl.href : "";
+    let sellerUrl = sellerEl && sellerEl.href ? sellerEl.href : "";
+    if (sellerUrl && sellerUrl.startsWith("/")) {
+      sellerUrl = window.location.origin + sellerUrl;
+    }
 
     const imageUrls = [];
     const origRegex =
@@ -158,6 +226,7 @@
       value,
       currency: "EUR",
       url: window.location.href.split("?")[0],
+      purchaseDate,
       imageUrls: deduplicateImages(imageUrls),
       sku,
       manufacturer: "",
@@ -176,6 +245,7 @@
     const name = titleEl ? titleEl.textContent.trim() : "";
 
     const linkEl =
+      cardEl.querySelector('a[href*=".html"]') ||
       cardEl.querySelector('a[href*="/item/"]') ||
       cardEl.querySelector("a.featured-item__link") ||
       (cardEl.tagName === "A" ? cardEl : cardEl.querySelector("a"));
@@ -199,9 +269,18 @@
     }
 
     const imgEl = cardEl.querySelector("img");
-    const imageUrl = imgEl
+    let imageUrl = imgEl
       ? imgEl.getAttribute("data-original") || imgEl.src
       : "";
+    if (!imageUrl) {
+      const bgEl = cardEl.querySelector("[style*='background-image']");
+      if (bgEl) {
+        const bgMatch = bgEl.style.backgroundImage.match(
+          /url\(["']?([^"']+)["']?\)/,
+        );
+        if (bgMatch) imageUrl = bgMatch[1];
+      }
+    }
 
     return {
       name,
@@ -240,11 +319,38 @@
         const skuEl = doc.querySelector('[itemprop="productID"]');
         if (skuEl) sku = skuEl.textContent.replace(/[^0-9]/g, "");
 
+        let purchaseDate = itemDetails.purchaseDate || "";
+        const dateEl =
+          doc.querySelector('[itemprop="validThrough"]') ||
+          doc.querySelector(".js-date-end");
+        let dateText = dateEl ? dateEl.textContent.trim() : "";
+        if (!dateText) {
+          const docRows = Array.from(doc.querySelectorAll("tr"));
+          const lopuaegRow = docRows.find((tr) =>
+            tr.textContent.includes("Lõpuaeg:"),
+          );
+          if (lopuaegRow) {
+            const td = lopuaegRow.querySelector("td");
+            if (td) dateText = td.textContent.trim();
+          }
+        }
+        if (dateText) {
+          purchaseDate = parseOstaDate(dateText) || purchaseDate;
+        }
+
         const sellerEl =
+          doc.querySelector(".view-seller-items-btn") ||
           doc.querySelector(".seller-name") ||
-          doc.querySelector(".user-name a");
-        const sellerName = sellerEl ? sellerEl.textContent.trim() : "";
-        const sellerUrl = sellerEl && sellerEl.href ? sellerEl.href : "";
+          doc.querySelector(".user-name a") ||
+          doc.querySelector(".username a");
+        const sellerName = sellerEl
+          ? sellerEl.textContent.trim()
+          : itemDetails.sellerName;
+        let sellerUrl =
+          sellerEl && sellerEl.href ? sellerEl.href : itemDetails.sellerUrl;
+        if (sellerUrl && sellerUrl.startsWith("/")) {
+          sellerUrl = window.location.origin + sellerUrl;
+        }
 
         const origRegex =
           /https?:\\?\/\\?\/img-osta\.ee\\?\/item\\?\/orig\\?\/[a-z0-9_\\\-/]+\.[a-z0-9]+/gi;
@@ -278,6 +384,7 @@
           sku,
           sellerName,
           sellerUrl,
+          purchaseDate,
           imageUrls: deduplicateImages(
             imageUrls.length > 0 ? imageUrls : itemDetails.imageUrls,
           ),
