@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - Core
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.1
+// @version      1.0.3
 // @description  Core background engine and API connector for Homebox e-shop userscripts
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -16,6 +16,9 @@
 // @match        *://*.depo.ee/*
 // @match        *://*.depo.lv/*
 // @match        *://*.arvutitark.ee/*
+// @match        *://*.euronics.ee/*
+// @match        *://*.euronics.lv/*
+// @match        *://*.euronics.lt/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
@@ -37,6 +40,7 @@
     "custom-osta": "Osta.ee",
     "custom-depo": "DEPO Online",
     "custom-arvutitark": "Arvutitark",
+    "custom-euronics": "Euronics",
     woocommerce: "WooCommerce",
     opencart: "OpenCart",
     storefrontui: "StorefrontUI",
@@ -44,6 +48,7 @@
     osta: "Osta.ee",
     depo: "DEPO Online",
     arvutitark: "Arvutitark",
+    euronics: "Euronics",
   };
 
   // --- CSS Styles ---
@@ -1904,6 +1909,15 @@
               if (el.closest(".owp-floating-bar")) {
                 continue;
               }
+              // Skip elements that are hidden (e.g. mobile containers hidden on desktop)
+              try {
+                const style = window.getComputedStyle(el);
+                if (style.display === "none" || style.visibility === "hidden") {
+                  continue;
+                }
+              } catch {
+                // ignore
+              }
               anchor = el;
               break;
             }
@@ -1911,6 +1925,11 @@
           }
 
           if (anchor) {
+            console.log(
+              `%c[Homebox Core] Injected detail button into:`,
+              "color: #10b981; font-weight: bold;",
+              anchor,
+            );
             const theme = ui.detail.theme || {};
             const btn = document.createElement("button");
             btn.type = "button";
@@ -1951,6 +1970,12 @@
 
             const pos = ui.detail.insertPosition || "beforeend";
             anchor.insertAdjacentElement(pos, btn);
+          } else {
+            console.warn(
+              `%c[Homebox Core] Could not find visible anchor for detail button using selectors:`,
+              "color: #f59e0b; font-weight: bold;",
+              selectors,
+            );
           }
         }
       }
@@ -2100,6 +2125,11 @@
 
   // --- Initializer ---
   function init() {
+    console.log(
+      `%c[Homebox Core] Engine active on ${window.location.hostname}`,
+      "color: #10b981; font-weight: bold;",
+    );
+
     const style = document.createElement("style");
     style.textContent = GLOBAL_CSS;
     document.head.appendChild(style);

@@ -14,16 +14,17 @@ A modular browser userscript suite that connects online stores directly to your 
 
 ## Supported Stores & Platforms
 
-| Store / Platform                   | Userscript File (One-Click Install)                                                                                                               | Target Domains                                |
-| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------- |
-| **Homebox Core Engine** (Required) | [`homebox-core.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-core.user.js)                                   | All supported stores                          |
-| **Handymann & WooCommerce**        | [`homebox-platform-woocommerce.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-woocommerce.user.js)   | `*.handymann.ee` & generic WooCommerce stores |
-| **Oomipood (OpenCart)**            | [`homebox-platform-opencart.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-opencart.user.js)         | `*.oomipood.ee`                               |
-| **Bauhof (StorefrontUI)**          | [`homebox-platform-storefrontui.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-storefrontui.user.js) | `*.bauhof.ee`                                 |
-| **Bauhaus (Magento)**              | [`homebox-platform-magento.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-magento.user.js)           | `*.bauhaus.ee`                                |
-| **Osta.ee**                        | [`homebox-custom-osta.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-osta.user.js)                     | `*.osta.ee`                                   |
-| **DEPO Online**                    | [`homebox-custom-depo.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-depo.user.js)                     | `*.depo.ee`, `*.depo.lv`                      |
-| **Arvutitark**                     | [`homebox-custom-arvutitark.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-arvutitark.user.js)         | `*.arvutitark.ee`                             |
+| Store / Platform                   | Userscript File (One-Click Install)                                                                                                               | Target Domains                                    |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------ |
+| **Homebox Core Engine** (Required) | [`homebox-core.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-core.user.js)                                   | All supported stores                              |
+| **Handymann & WooCommerce**        | [`homebox-platform-woocommerce.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-woocommerce.user.js)   | `*.handymann.ee` & generic WooCommerce stores     |
+| **Oomipood (OpenCart)**            | [`homebox-platform-opencart.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-opencart.user.js)         | `*.oomipood.ee`                                   |
+| **Bauhof (StorefrontUI)**          | [`homebox-platform-storefrontui.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-storefrontui.user.js) | `*.bauhof.ee`                                     |
+| **Bauhaus (Magento)**              | [`homebox-platform-magento.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-magento.user.js)           | `*.bauhaus.ee`                                    |
+| **Osta.ee**                        | [`homebox-custom-osta.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-osta.user.js)                     | `*.osta.ee`                                       |
+| **DEPO Online**                    | [`homebox-custom-depo.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-depo.user.js)                     | `*.depo.ee`, `*.depo.lv`                          |
+| **Arvutitark**                     | [`homebox-custom-arvutitark.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-arvutitark.user.js)         | `*.arvutitark.ee`                                 |
+| **Euronics**                       | [`homebox-custom-euronics.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-euronics.user.js)             | `*.euronics.ee`, `*.euronics.lv`, `*.euronics.lt` |
 
 ## Installation (For Users)
 

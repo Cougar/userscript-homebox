@@ -29,6 +29,7 @@ The userscript suite is decoupled into a central **Core Engine** and lightweight
 - `homebox-custom-osta.user.js`: Dedicated custom adapter for Osta.ee (handling auction/buy prices, seller metadata, and direct HTML `/orig/` high-res photo parsing).
 - `homebox-custom-depo.user.js`: Dedicated custom adapter for DEPO Online React SPA (handling table attributes and upscaled 4000x4000 image regex).
 - `homebox-custom-arvutitark.user.js`: Dedicated custom adapter for Arvutitark React SPA (handling JSON-LD microdata and raw cms.arvutitark.ee master photos).
+- `homebox-custom-euronics.user.js`: Dedicated custom adapter for Euronics ASP.NET Core web store (handling JSON-LD microdata, uncompressed .avif gallery images, and PDF manuals).
 - `eslint.config.mjs`: ESLint Flat Configuration file defining browser and Greasemonkey environments.
 
 ---
