@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - Core
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.0
+// @version      1.0.1
 // @description  Core background engine and API connector for Homebox e-shop userscripts
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -15,6 +15,7 @@
 // @match        *://*.bauhaus.ee/*
 // @match        *://*.depo.ee/*
 // @match        *://*.depo.lv/*
+// @match        *://*.arvutitark.ee/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
@@ -35,12 +36,14 @@
     "platform-magento": "Magento",
     "custom-osta": "Osta.ee",
     "custom-depo": "DEPO Online",
+    "custom-arvutitark": "Arvutitark",
     woocommerce: "WooCommerce",
     opencart: "OpenCart",
     storefrontui: "StorefrontUI",
     magento: "Magento",
     osta: "Osta.ee",
     depo: "DEPO Online",
+    arvutitark: "Arvutitark",
   };
 
   // --- CSS Styles ---

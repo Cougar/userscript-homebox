@@ -23,6 +23,7 @@ A modular browser userscript suite that connects online stores directly to your 
 | **Bauhaus (Magento)**              | [`homebox-platform-magento.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-platform-magento.user.js)           | `*.bauhaus.ee`                                |
 | **Osta.ee**                        | [`homebox-custom-osta.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-osta.user.js)                     | `*.osta.ee`                                   |
 | **DEPO Online**                    | [`homebox-custom-depo.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-depo.user.js)                     | `*.depo.ee`, `*.depo.lv`                      |
+| **Arvutitark**                     | [`homebox-custom-arvutitark.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-arvutitark.user.js)         | `*.arvutitark.ee`                             |
 
 ## Installation (For Users)
 
