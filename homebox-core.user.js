@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - Core
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.4
+// @version      1.0.7
 // @description  Core background engine and API connector for Homebox e-shop userscripts
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -323,13 +323,23 @@
     .homebox-list-btn:active {
       transform: scale(0.95);
     }
+    .homebox-list-btn svg.homebox-btn-icon {
+      width: 55%;
+      height: 55%;
+      max-width: 16px;
+      max-height: 16px;
+    }
 
     /* Standard triggers for quick-add visibility */
     li.product:hover .homebox-list-btn,
     .products .product:hover .homebox-list-btn,
     .wpb-wps-slider-item:hover .homebox-list-btn,
     .product-grid-item:hover .homebox-list-btn,
-    .product-item-info:hover .homebox-list-btn {
+    .product-item-info:hover .homebox-list-btn,
+    .offer-thumb:hover .homebox-list-btn,
+    .plp-mastercard:hover .homebox-list-btn,
+    .product-card:hover .homebox-list-btn,
+    .catalogue-product-wrapper:hover .homebox-list-btn {
       opacity: 1;
     }
 
@@ -411,6 +421,10 @@
         locationId: GM_getValue("homebox_location_id", ""),
         locationName: GM_getValue("homebox_location_name", ""),
         currency: GM_getValue("homebox_currency", "EUR"),
+        enableListingButtons: GM_getValue(
+          "homebox_enable_listing_buttons",
+          true,
+        ),
         tagIds,
       };
     },
@@ -423,6 +437,10 @@
       GM_setValue("homebox_location_id", config.locationId);
       GM_setValue("homebox_location_name", config.locationName);
       GM_setValue("homebox_currency", config.currency);
+      GM_setValue(
+        "homebox_enable_listing_buttons",
+        config.enableListingButtons !== false,
+      );
       GM_setValue("homebox_tag_ids", JSON.stringify(config.tagIds || []));
     },
 
@@ -599,6 +617,14 @@
                 <button id="hb-load-tags" class="homebox-btn homebox-btn-secondary" disabled>Load</button>
               </div>
               <small style="color: #6b7280; font-size: 11px; margin-top: 4px; display: block;">Hold Ctrl/Cmd to select multiple tags.</small>
+            </div>
+
+            <div class="homebox-form-group" style="margin-top: 16px; margin-bottom: 6px;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="hb-enable-listings" ${config.enableListingButtons !== false ? "checked" : ""} style="width: 17px; height: 17px; accent-color: #10b981; cursor: pointer;">
+                <span style="font-size: 13px; font-weight: 600; color: #374151;">Show quick-add buttons on catalog & search listings</span>
+              </label>
+              <small style="color: #6b7280; font-size: 11px; margin-left: 27px; display: block;">Uncheck to hide floating buttons on product grid cards.</small>
             </div>
 
             <!-- Active Page Context Banner -->
@@ -1053,6 +1079,13 @@
           ? matchedGroup.currency || "EUR"
           : config.currency || "EUR";
 
+        const enableListingsInput = overlay.querySelector(
+          "#hb-enable-listings",
+        );
+        const enableListingButtons = enableListingsInput
+          ? enableListingsInput.checked
+          : true;
+
         Config.save({
           url,
           token,
@@ -1061,8 +1094,18 @@
           locationId,
           locationName,
           currency,
+          enableListingButtons,
           tagIds,
         });
+
+        // Clean up or re-inject listing buttons based on preference
+        if (!enableListingButtons) {
+          document
+            .querySelectorAll(".homebox-list-btn")
+            .forEach((btn) => btn.remove());
+        } else {
+          injectInterfaceButtons();
+        }
 
         // Commit active overrides
         saveActiveOverride();
@@ -1897,6 +1940,7 @@
   }
 
   function injectInterfaceButtons() {
+    const config = Config.load();
     Object.keys(activeAdapters).forEach((id) => {
       const adapter = activeAdapters[id];
       const ui = adapter.ui || {};
@@ -1996,6 +2040,9 @@
 
       // 2. Ingest Grid Product Lists buttons
       if (ui.listing && ui.listing.cardSelector) {
+        if (config.enableListingButtons === false) {
+          return;
+        }
         const cards = document.querySelectorAll(ui.listing.cardSelector);
         cards.forEach((card, idx) => {
           if (card.querySelector(".homebox-list-btn")) return;
