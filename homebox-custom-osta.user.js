@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - [Custom] Osta.ee
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.2
+// @version      1.0.5
 // @description  Homebox e-shop integration custom adapter for Osta.ee
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -58,7 +58,23 @@
         styleOverrides: {
           position: "absolute",
           top: "8px",
-          right: "8px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "26px",
+          height: "26px",
+          minWidth: "26px",
+          minHeight: "26px",
+          padding: "0",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#10b981",
+          color: "#ffffff",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+          opacity: "0.85",
+          zIndex: "40",
+          border: "none",
         },
       },
     },
