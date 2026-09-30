@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Homebox Connector - Core
 // @namespace    https://github.com/Cougar/userscript-homebox
-// @version      1.0.3
+// @version      1.0.4
 // @description  Core background engine and API connector for Homebox e-shop userscripts
 // @author       Cougar
 // @homepageURL  https://github.com/Cougar/userscript-homebox
@@ -19,6 +19,7 @@
 // @match        *://*.euronics.ee/*
 // @match        *://*.euronics.lv/*
 // @match        *://*.euronics.lt/*
+// @match        *://*.ikea.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
@@ -41,6 +42,7 @@
     "custom-depo": "DEPO Online",
     "custom-arvutitark": "Arvutitark",
     "custom-euronics": "Euronics",
+    "custom-ikea": "IKEA",
     woocommerce: "WooCommerce",
     opencart: "OpenCart",
     storefrontui: "StorefrontUI",
@@ -49,6 +51,7 @@
     depo: "DEPO Online",
     arvutitark: "Arvutitark",
     euronics: "Euronics",
+    ikea: "IKEA",
   };
 
   // --- CSS Styles ---
@@ -1743,8 +1746,9 @@
             tagIds: finalTagIds,
           };
 
+          const customFields = [];
           if (itemDetails.sellerName) {
-            updatePayload.fields = [
+            customFields.push(
               {
                 name: "seller_name",
                 textValue: itemDetails.sellerName,
@@ -1755,7 +1759,17 @@
                 textValue: itemDetails.sellerUrl || "",
                 type: "text",
               },
-            ];
+            );
+          }
+          if (Array.isArray(itemDetails.fields)) {
+            itemDetails.fields.forEach((f) => {
+              if (f && f.name && f.textValue !== undefined) {
+                customFields.push(f);
+              }
+            });
+          }
+          if (customFields.length > 0) {
+            updatePayload.fields = customFields;
           }
 
           console.log(
