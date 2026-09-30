@@ -25,6 +25,7 @@ A modular browser userscript suite that connects online stores directly to your 
 | **DEPO Online**                    | [`homebox-custom-depo.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-depo.user.js)                     | `*.depo.ee`, `*.depo.lv`                          |
 | **Arvutitark**                     | [`homebox-custom-arvutitark.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-arvutitark.user.js)         | `*.arvutitark.ee`                                 |
 | **Euronics**                       | [`homebox-custom-euronics.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-euronics.user.js)             | `*.euronics.ee`, `*.euronics.lv`, `*.euronics.lt` |
+| **IKEA**                           | [`homebox-custom-ikea.user.js`](https://raw.githubusercontent.com/Cougar/userscript-homebox/main/homebox-custom-ikea.user.js)                     | `*.ikea.com`                                      |
 
 ## Installation (For Users)
 
